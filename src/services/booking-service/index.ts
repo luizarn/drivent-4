@@ -14,6 +14,7 @@ import bookingRepository from '@/repositories/booking-repository';
 async function getBookings(userId: number) {
   const bookings = await bookingRepository.findBookingUser(userId);
   if (!bookings) throw notFoundError();
+  return bookings;
 }
 
 const bookingService = {

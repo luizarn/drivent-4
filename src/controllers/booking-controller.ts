@@ -7,8 +7,11 @@ export async function getBookings(req: AuthenticatedRequest, res: Response, next
   const { userId } = req;
 
   try {
-    const bookings = await bookingService.getBookings(userId);
-    return res.status(httpStatus.OK).send(bookings);
+    const bookings = await bookingService.getBookings(Number(userId));
+    return res.status(httpStatus.OK).send({
+      id: bookings.id,
+      Room: bookings.Room,
+    });
   } catch (error) {
     next(error);
   }
