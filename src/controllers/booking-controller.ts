@@ -20,25 +20,31 @@ export async function getBookings(req: AuthenticatedRequest, res: Response, next
 
 export async function createBooking(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
   const { userId } = req;
-  const { roomId } = req.body as InputBookingBody;
+  const roomId: number = req.body.roomId;
 
   try {
     const bookingCreated = await bookingService.createBooking(userId, roomId);
     return res.status(httpStatus.CREATED).send({
       bookingId: bookingCreated.id,
     });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+    if (error.name === 'cannotListBookingError') {
+      return res.sendStatus(httpStatus.FORBIDDEN);
+    }
+    return res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
 
 export async function updateBooking(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
   const { userId } = req;
   const { bookingId } = req.params;
-  const { roomId } = req.body as InputBookingBody;
+  const { roomId } = req.body;
 
   try {
-    const updatedRoom = await bookingService.updateBooking(userId, Number(bookingId), roomId);
+    const updatedRoom = await bookingService.updateBooking(userId, Number(bookingId), Number(roomId));
     return res.status(httpStatus.CREATED).send({
       bookingId: updatedRoom.id,
     });
