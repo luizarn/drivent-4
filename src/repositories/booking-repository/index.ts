@@ -1,8 +1,8 @@
 import { prisma } from '@/config';
 
-async function findBookingUser(userId: number) {
+async function findBookingUser(bookingId: number) {
   return prisma.booking.findFirst({
-    where: { userId },
+    where: { id: bookingId },
     include: {
       Room: true,
     },
