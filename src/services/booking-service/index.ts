@@ -9,8 +9,7 @@ async function createBooking(userId: number, roomId: number) {
   if (!enrollment) throw cannotListBookingError();
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-
-  if (!ticket || ticket.status !== 'PAID' || ticket.TicketType.isRemote || !ticket.TicketType.includesHotel) {
+  if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status !== 'PAID' || !ticket) {
     throw cannotListBookingError();
   }
 
@@ -18,10 +17,9 @@ async function createBooking(userId: number, roomId: number) {
   if (!room) throw notFoundError();
 
   const quantityRoomByBooking = await bookingRepository.listBookingsByRoomId(roomId);
-  if (room.capacity === quantityRoomByBooking.length) throw cannotListBookingError();
+  if (room.capacity <= quantityRoomByBooking.length) throw cannotListBookingError();
 
   const bookingCreated = await bookingRepository.createBooking(userId, roomId);
-
   return bookingCreated;
 }
 
@@ -39,7 +37,7 @@ async function updateBooking(userId: number, roomId: number, bookingId: number) 
   if (!room) throw notFoundError();
 
   const quantityRoomByBooking = await bookingRepository.listBookingsByRoomId(roomId);
-  if (room.capacity === quantityRoomByBooking.length) throw cannotListBookingError;
+  if (room.capacity <= quantityRoomByBooking.length) throw cannotListBookingError;
 
   const bookingUpdated = await bookingRepository.updateBooking(roomId, bookingId);
   if (!bookingUpdated) throw notFoundError();
