@@ -12,6 +12,3 @@ bookingRouter
   .put('/:bookingId', validateBody(bookingSchema), updateBooking);
 
 export { bookingRouter };
-
-// .post('/', validateBody(bookingSchema), createBooking)
-// .put('/:bookingId', attBooking);

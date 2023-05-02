@@ -25,7 +25,7 @@ export async function createBooking(req: AuthenticatedRequest, res: Response, ne
   try {
     const bookingCreated = await bookingService.createBooking(userId, roomId);
     return res.status(httpStatus.CREATED).send({
-      id: bookingCreated.id,
+      bookingId: bookingCreated.id,
     });
   } catch (e) {
     next(e);
@@ -35,11 +35,12 @@ export async function createBooking(req: AuthenticatedRequest, res: Response, ne
 export async function updateBooking(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
   const { userId } = req;
   const { bookingId } = req.params;
+  const { roomId } = req.body as InputBookingBody;
 
   try {
-    const updatedRoom = await bookingService.updateBooking(userId, Number(bookingId));
+    const updatedRoom = await bookingService.updateBooking(userId, Number(bookingId), roomId);
     return res.status(httpStatus.CREATED).send({
-      id: updatedRoom.id,
+      bookingId: updatedRoom.id,
     });
   } catch (e) {
     next(e);
