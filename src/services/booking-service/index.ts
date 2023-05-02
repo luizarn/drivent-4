@@ -37,8 +37,7 @@ async function updateBooking(userId: number, bookingId: number, roomId: number) 
 
   if (room.capacity <= room.Booking.length) throw cannotListBookingError();
 
-  const bookingUpdated = await bookingRepository.updateBooking(roomId, bookingId);
-  if (!bookingUpdated) throw notFoundError();
+  const bookingUpdated = await bookingRepository.updateBooking(bookingId, roomId);
   return bookingUpdated;
 }
 

@@ -27,7 +27,7 @@ async function checkBook(roomId: number) {
   });
 }
 
-async function updateBooking(roomId: number, bookingId: number) {
+async function updateBooking(bookingId: number, roomId: number) {
   return prisma.booking.update({
     where: { id: bookingId },
     data: {
