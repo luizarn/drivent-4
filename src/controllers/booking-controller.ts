@@ -2,7 +2,6 @@ import httpStatus from 'http-status';
 import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '@/middlewares';
 import bookingService from '@/services/booking-service';
-import { InputBookingBody } from '@/protocols';
 
 export async function getBookings(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const { userId } = req;
@@ -44,11 +43,19 @@ export async function updateBooking(req: AuthenticatedRequest, res: Response, ne
   const { roomId } = req.body;
 
   try {
+    if (!roomId) return res.sendStatus(httpStatus.BAD_REQUEST);
+
     const updatedRoom = await bookingService.updateBooking(userId, Number(bookingId), Number(roomId));
     return res.status(httpStatus.OK).send({
       bookingId: updatedRoom.id,
     });
-  } catch (e) {
-    next(e);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.sendStatus(httpStatus.NOT_FOUND);
+    }
+    if (error.name === 'cannotListBookingError') {
+      return res.sendStatus(httpStatus.FORBIDDEN);
+    }
+    return res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
